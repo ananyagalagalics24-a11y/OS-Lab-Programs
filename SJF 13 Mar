@@ -1,0 +1,72 @@
+#include<stdio.h>
+#include <stdlib.h>
+
+struct process{
+    int at;
+    int bt;
+    int id;
+    int ct;
+    int tat;
+    int wt;
+    int comp;
+};
+
+int main()
+{
+    int n, i;
+    float avgwt=0, avgtat=0;
+    int curr=0,compl=0;
+    printf("Enter no. of process:");
+    scanf("%d",&n);
+    struct process p[n];
+    for(i=0;i<n;i++)
+    {
+        p[i].id=i+1;
+        printf("Enter arrival time:");
+        scanf("%d",&p[i].at);
+        printf("Enter burst time:");
+        scanf("%d",&p[i].bt);
+        p[i].comp=0;
+    }
+    while(compl<n)
+    {
+        int ind=-1;
+        int minbt=9999;
+        for(i=0;i<n;i++)
+        {
+            if((p[i].at <= curr)&& p[i].comp==0)
+                {
+                    if(p[i].bt<minbt)
+                    {
+                        minbt=p[i].bt;
+                        ind=i;
+                    }
+                }
+        }
+        if(ind==-1)
+        {
+            curr++;
+        }
+        else
+        {
+            p[ind].ct=curr+p[ind].bt;
+            p[ind].tat=p[ind].ct-p[ind].at;
+            p[ind].wt=p[ind].tat-p[ind].bt;
+            p[ind].comp=1;
+            curr=p[ind].ct;
+            compl++;
+            avgwt+=p[ind].wt;
+            avgtat+=p[ind].tat;
+        }
+    }
+    avgwt/=n;
+    avgtat/=n;
+    printf("\nID\tAT\tBT\tCT\tWT\tTAT\n");
+    for(i=0;i<n;i++)
+    {
+        printf("P%d\t%d\t%d\t%d\t%d\t%d\n",p[i].id,p[i].at,p[i].bt,p[i].ct,p[i].wt,p[i].tat);
+    }
+    printf("\nAverage TAT=%.2f",avgtat);
+    printf("\nAverage WT=%.2f",avgwt);
+    return 0;
+}
