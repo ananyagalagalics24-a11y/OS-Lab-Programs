@@ -1,0 +1,101 @@
+#include <stdio.h>
+
+struct Process {
+    int id;
+    int arrivalTime;
+    int burstTime;
+    int deadline;
+    int remainingTime;
+    int completed;
+};
+
+// Function to input process details
+void inputProcesses(struct Process p[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("\nEnter Arrival Time, Burst Time and Deadline for Process P%d: ", i + 1);
+        scanf("%d %d %d",
+              &p[i].arrivalTime,
+              &p[i].burstTime,
+              &p[i].deadline);
+
+        p[i].id = i + 1;
+        p[i].remainingTime = p[i].burstTime;
+        p[i].completed = 0;
+    }
+}
+
+// Function to find process with earliest deadline
+int findEarliestDeadline(struct Process p[], int n, int currentTime) {
+    int earliest = -1;
+
+    for (int i = 0; i < n; i++) {
+
+        // Check if process has arrived and not completed
+        if (p[i].arrivalTime <= currentTime &&
+            p[i].completed == 0) {
+
+            if (earliest == -1 ||
+                p[i].deadline < p[earliest].deadline) {
+
+                earliest = i;
+            }
+        }
+    }
+
+    return earliest;
+}
+
+// Function to execute EDF Scheduling
+void EDFScheduling(struct Process p[], int n) {
+
+    int time = 0;
+    int completed = 0;
+
+    printf("\n===== Earliest Deadline First Scheduling =====\n");
+
+    while (completed < n) {
+
+        int index = findEarliestDeadline(p, n, time);
+
+        // If no process is ready
+        if (index == -1) {
+            printf("Time %d -> CPU Idle\n", time);
+            time++;
+            continue;
+        }
+
+        // Execute selected process for 1 unit time
+        printf("Time %d -> P%d\n", time, p[index].id);
+
+        p[index].remainingTime--;
+        time++;
+
+        // Check completion
+        if (p[index].remainingTime == 0) {
+            p[index].completed = 1;
+            completed++;
+
+            printf("P%d completed at time %d\n",
+                   p[index].id, time);
+        }
+    }
+
+    printf("\nAll processes completed successfully.\n");
+}
+
+// Main function
+int main() {
+
+    int n;
+
+    printf("Enter number of processes: ");
+    scanf("%d", &n);
+
+    struct Process p[n];
+
+    inputProcesses(p, n);
+
+    EDFScheduling(p, n);
+
+    return 0;
+}
