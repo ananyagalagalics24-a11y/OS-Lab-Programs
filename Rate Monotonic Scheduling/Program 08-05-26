@@ -1,0 +1,53 @@
+#include <stdio.h>
+
+struct Process {
+    int id;
+    int burstTime;
+    int period;
+};
+
+int main() {
+    int n, i, j;
+    struct Process p[10], temp;
+
+    printf("Enter number of processes: ");
+    scanf("%d", &n);
+
+    // Input process details
+    for(i = 0; i < n; i++) {
+        printf("\nProcess %d\n", i + 1);
+
+        printf("Enter Burst Time: ");
+        scanf("%d", &p[i].burstTime);
+
+        printf("Enter Period: ");
+        scanf("%d", &p[i].period);
+
+        p[i].id = i + 1;
+    }
+
+    // Sort according to smaller period (higher priority)
+    for(i = 0; i < n - 1; i++) {
+        for(j = i + 1; j < n; j++) {
+            if(p[i].period > p[j].period) {
+                temp = p[i];
+                p[i] = p[j];
+                p[j] = temp;
+            }
+        }
+    }
+
+    // Display scheduling order
+    printf("\nProcesses scheduled using Rate Monotonic Scheduling:\n");
+
+    printf("\nProcess\tBurst Time\tPeriod\tPriority\n");
+
+    for(i = 0; i < n; i++) {
+        printf("P%d\t\t%d\t\t%d\tHigh\n",
+               p[i].id,
+               p[i].burstTime,
+               p[i].period);
+    }
+
+    return 0;
+}
